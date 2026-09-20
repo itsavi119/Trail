@@ -1,0 +1,231 @@
+/*
+ * notes.css
+ * -----------------------------------------------------------------
+ * Styling for the Pharm D Notes pages render.js generates.
+ *
+ * IMPORTANT — this is not a line-for-line extraction. The original
+ * site defines these same structural rules once PER SUBJECT, with a
+ * different class prefix each time (.cpk-chapter-row, .hap-chapter-
+ * row, .yr6-chapter-row, .pe-topic-row, and so on — confirmed
+ * structurally identical to each other in every sampled case, just
+ * copy-pasted under a new name). render.js deliberately emits ONE
+ * generic class per element instead (.ln-chapter-row, .ln-unit-
+ * topic-row, etc.), so this file defines each rule exactly once.
+ *
+ * Per-subject COLOR still needs to vary, though, and two different
+ * mechanisms carry it, matching what render.js already does:
+ *   - Where the original always used an inline style for a color
+ *     (e.g. a chapter-num badge's background/color), render.js
+ *     inlines the same style, and this file has no color rule for
+ *     that element at all — only structure (size, radius, spacing).
+ *   - Where the original baked a color into a per-subject CSS RULE
+ *     (topic-row number/PDF-pill badges) — because that same
+ *     element also needs a different look when active in the
+ *     landscape nav, which inline styles can't cleanly override —
+ *     render.js instead sets --ln-topic-accent / --ln-topic-accent-bg
+ *     on the row list's container, and this file reads those
+ *     variables. This *is* a small, deliberate render.js extension
+ *     made during this CSS pass (renderChapterPage didn't originally
+ *     set these vars; renderTopicPage's nav sidebar already did) —
+ *     not a silent behavior change, since nothing rendered from
+ *     these classes before this pass existed to compare against.
+ *
+ * Assumes tokens.css and base.css are loaded first.
+ * -----------------------------------------------------------------
+ */
+
+/* ── Subject rows (Year page) & Chapter/Unit rows (Subject page) ──
+   render.js uses the same four classes for both — a subject-list row
+   and a chapter-list row are structurally identical in every source
+   file sampled, just appearing on different pages. */
+.ln-chapter-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 0.65rem 0.75rem;
+    margin-bottom: 0.45rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+.ln-chapter-row:hover {
+    box-shadow: var(--shadow-lg);
+}
+.ln-chapter-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.76rem;
+    flex-shrink: 0;
+    /* background/color always come inline from render.js — every
+       row's num badge is a different subject's color. */
+}
+.ln-chapter-title {
+    font-weight: 700;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+.ln-chapter-sub {
+    font-size: 0.66rem;
+    color: var(--text-secondary);
+    margin-top: 0.1rem;
+}
+.ln-chapter-arrow {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* ── Topic rows (a Chapter page's "Topics" list, and every Topic
+   page's own persistent nav sidebar) ────────────────────────────── */
+.ln-unit-topic-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 0.65rem 0.75rem;
+    margin-bottom: 0.45rem;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+}
+.ln-unit-topic-row:hover {
+    box-shadow: var(--shadow-lg);
+}
+.ln-unit-topic-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 0.76rem;
+    flex-shrink: 0;
+    /* Reads the nearest --ln-topic-accent-bg/--ln-topic-accent set by
+       render.js on the row list's container — see file header. */
+    background: var(--ln-topic-accent-bg, #ECEAF9);
+    color: var(--ln-topic-accent, #6657A6);
+}
+.ln-unit-topic-title {
+    font-weight: 700;
+    font-size: 0.86rem;
+    color: var(--text-primary);
+    line-height: 1.25;
+}
+/* Year 1/2/3's two-line rows (topicRowShowsOrdinal): the real
+   descriptive name, shown beneath the generic "Topic N" title. */
+.ln-unit-topic-sub {
+    font-size: 0.72rem;
+    color: var(--text-secondary);
+    margin-top: 0.15rem;
+    line-height: 1.4;
+}
+.ln-unit-topic-pdf {
+    margin-left: auto;
+    font-size: 0.62rem;
+    font-weight: 800;
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: var(--ln-topic-accent-bg, #ECEAF9);
+    color: var(--ln-topic-accent, #6657A6);
+}
+.ln-unit-topic-arrow {
+    margin-left: auto;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* ── Topic detail page: persistent nav (landscape) + PDF slot ──────
+   Portrait is untouched by any rule below except the two display:none
+   defaults — .ln-topic-shell/.ln-topic-main/.ln-topic-main-inner are
+   plain block elements in portrait, exactly as the original was. */
+.ln-topic-nav { display: none; }
+.ln-topic-landscape-title { display: none; }
+
+@media (orientation: landscape) {
+    .ln-topic-page.page {
+        padding: 0 !important;
+    }
+    .ln-topic-shell {
+        display: flex;
+        align-items: stretch;
+        min-height: 100%;
+    }
+    .ln-topic-nav {
+        display: block;
+        width: 40%;
+        max-width: 40%;
+        flex-shrink: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1rem;
+        background: var(--background);
+        border-right: 1px solid var(--border);
+    }
+    .ln-topic-main {
+        width: 60%;
+        flex: 1;
+        display: flex;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        padding: 1.1rem 1.25rem;
+    }
+    .ln-topic-main-inner {
+        max-width: none !important;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 100%;
+    }
+    .ln-topic-portrait-only {
+        display: none;
+    }
+    .ln-topic-landscape-title {
+        display: block;
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: var(--text-primary);
+        margin-bottom: 0.75rem;
+        flex-shrink: 0;
+    }
+    .ln-topic-shell .ln-unit-pdf-card {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    .ln-topic-shell .ln-pdf-viewport {
+        flex: none;
+        width: 92%;
+        margin: 0 auto;
+        aspect-ratio: 210 / 297 !important;
+        max-height: none !important;
+        height: auto;
+    }
+    /* Active topic in the persistent left nav — each subject's own
+       accent, supplied via --ln-topic-accent/--ln-topic-accent-bg;
+       no new colors introduced here. */
+    .ln-topic-nav-row.active {
+        background: var(--ln-topic-accent-bg, #ECE9F8);
+        box-shadow: inset 3px 0 0 var(--ln-topic-accent, #6657A6), var(--shadow);
+    }
+    .ln-topic-nav-row.active .ln-unit-topic-num {
+        background: var(--ln-topic-accent, #6657A6);
+        color: #fff;
+    }
+    .ln-topic-nav-row.active .ln-unit-topic-arrow {
+        color: var(--ln-topic-accent, #6657A6);
+    }
+}

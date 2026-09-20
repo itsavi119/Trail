@@ -1,0 +1,70 @@
+/*
+ * tokens.css
+ * -----------------------------------------------------------------
+ * Global design tokens. Extracted from year1.html's :root block
+ * (confirmed byte-identical to index.html's own :root earlier in
+ * this migration), plus the dark-theme and high-contrast overrides
+ * that already existed alongside it.
+ *
+ * These are pure CSS custom properties — no selectors reference
+ * subject or page ids here. Every other stylesheet in this project
+ * (base.css, components.css, notes.css) is written entirely in terms
+ * of these variables, never a hardcoded color/spacing value, so a
+ * future re-theme only touches this one file.
+ * -----------------------------------------------------------------
+ */
+
+:root {
+    --primary-color: #6366f1;
+    --primary-dark: #4f46e5;
+    --secondary-color: #06b6d4;
+    --accent-color: #10b981;
+    --danger-color: #ef4444;
+    --warning-color: #f59e0b;
+    --success-color: #22c55e;
+    --favorite-color: #f59e0b;
+
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --background: #f8fafc;
+    --surface: #ffffff;
+    --border: #e5e7eb;
+
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --border-radius: 12px;
+    --border-radius-lg: 16px;
+
+    --space-xs: 0.5rem;
+    --space-sm: 0.75rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+    --page-padding: 1rem;
+
+    --bn-space: calc(58px + env(safe-area-inset-bottom));
+}
+
+[data-theme="dark"] {
+    --primary-color: #818cf8;
+    --primary-dark: #6366f1;
+    --text-primary: #f9fafb;
+    --text-secondary: #d1d5db;
+    --background: #111827;
+    --surface: #1f2937;
+    --border: #374151;
+}
+
+@media (prefers-contrast: high) {
+    :root {
+        --border: #000000;
+        --shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+    }
+}
+
+/* Tighter page padding on narrow screens — matches the site's
+   existing small-viewport behavior. */
+@media (max-width: 380px) {
+    :root { --page-padding: 0.6rem; }
+}

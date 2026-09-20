@@ -1,0 +1,205 @@
+/*
+ * base.css
+ * -----------------------------------------------------------------
+ * Resets and the mechanics every page needs regardless of what's on
+ * it: the .page show/hide/slide system Nav.js drives, the bottom tab
+ * bar, toast notifications, the loading spinner, and the shared
+ * back button. Extracted from year1.html, which carried the most
+ * complete version of each of these (see notes.js's header comments
+ * for cases where a later year's variant differed).
+ *
+ * This file assumes tokens.css is loaded first.
+ * -----------------------------------------------------------------
+ */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: auto !important;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--background);
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+}
+
+*:focus {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* ── Page show/hide/slide system — driven entirely by nav.js's
+   Nav.go()/Nav.back(), which just toggles these classes. ────────── */
+.page {
+    display: block;
+    position: fixed;
+    top: 56px;
+    left: 0; right: 0; bottom: var(--bn-space);
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    background: var(--background);
+    z-index: 10;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(22px);
+    transition: opacity 0.28s cubic-bezier(0.4,0,0.2,1),
+                transform 0.28s cubic-bezier(0.4,0,0.2,1);
+    will-change: opacity, transform;
+}
+.page.active {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+}
+.page.slide-back {
+    transform: translateX(-18px);
+}
+
+/* ── Bottom Tab Bar ──────────────────────────────────────────────── */
+.bottom-nav {
+    position: fixed;
+    left: 0; right: 0; bottom: 0;
+    display: flex;
+    align-items: stretch;
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: 200;
+    transform: translateY(0);
+    opacity: 1;
+    transition: transform 0.32s cubic-bezier(0.4,0,0.2,1),
+                opacity 0.32s cubic-bezier(0.4,0,0.2,1);
+    will-change: transform, opacity;
+}
+/* Auto-hide state (touch devices only). Purely visual — the nav is
+   `position: fixed` and already out of flow, so hiding it never
+   reflows page content. */
+.bottom-nav.bn-hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+.bottom-nav-item {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.55rem 0.25rem 0.45rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-secondary);
+    font-family: inherit;
+    transition: color 0.15s ease;
+}
+.bottom-nav-item svg {
+    width: 21px;
+    height: 21px;
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    transition: stroke 0.15s;
+}
+.bottom-nav-item span {
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+.bottom-nav-item:focus-visible {
+    outline: 2px solid var(--primary-dark);
+    outline-offset: -2px;
+    border-radius: 14px;
+}
+.bottom-nav-item.active {
+    color: var(--primary-dark);
+}
+
+/* ── Shared back button — every subject/chapter/topic page uses this
+   exact class, never a per-subject variant. ──────────────────────── */
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    background: var(--surface);
+    color: var(--primary-color);
+    border: 1.5px solid var(--border);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.82rem;
+    font-weight: 600;
+    transition: var(--transition);
+    margin-bottom: var(--space-md);
+}
+.back-btn:hover {
+    background: var(--background);
+}
+
+/* ── Toast notifications (AppState.showNotification) ──────────────── */
+.toast {
+    background: #1f2937;
+    color: #f9fafb;
+    border: none;
+    border-radius: 12px;
+    padding: 0.75rem 1.1rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    width: 100%;
+    opacity: 0;
+    transform: translateY(12px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+.toast.hide {
+    opacity: 0;
+    transform: translateY(12px);
+}
+.toast.success { border-left: 4px solid var(--success-color); }
+.toast.error   { border-left: 4px solid var(--danger-color); }
+.toast.warning { border-left: 4px solid var(--warning-color); }
+
+/* ── Loading spinner ────────────────────────────────────────────── */
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid var(--border);
+    border-top: 4px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* ── Generic empty state (used by Coming Soon and similar states) ── */
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: var(--text-secondary);
+}
+.empty-state .empty-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+.empty-state h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
